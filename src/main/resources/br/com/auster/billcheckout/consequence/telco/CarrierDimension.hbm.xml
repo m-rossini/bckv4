@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class lazy="false"
+        name="br.com.auster.billcheckout.consequence.telco.CarrierDimension"
+        table="BCK_CARRIER_DM">
+
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_dimensions_uid</param>
+            </generator>
+        </id>
+
+        <property
+            name="carrierCompany"
+            type="string"
+            update="true"
+            insert="true"
+            column="CARRIER_NAME" 
+            length="48"
+            not-null="false"/>
+
+        <property
+            name="carrierCode"
+            type="string"
+            update="true"
+            insert="true"
+            column="CARRIER_CODE" 
+            length="8"
+            not-null="false"/>
+
+        <property
+            name="carrierState"
+            type="string"
+            update="true"
+            insert="true"
+            column="CARRIER_STATE"
+            length="8"
+            not-null="false"/>
+		
+        <property
+            name="custom1"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_1"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom2"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_2"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom3"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_3"
+            length="30"
+            not-null="false"/>
+   </class>
+
+</hibernate-mapping>

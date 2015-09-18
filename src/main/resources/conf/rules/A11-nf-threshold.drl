@@ -1,0 +1,107 @@
+package br.com.auster.billchekout.core;
+
+import java.util.Iterator;
+import java.util.Collection;
+
+import br.com.auster.om.invoice.Receipt;
+import br.com.auster.om.invoice.Account;
+import br.com.auster.billcheckout.thresholds.BaseThreshold;
+import br.com.auster.billcheckout.thresholds.NFThreshold;
+import br.com.auster.billcheckout.thresholds.CustomerType;
+import br.com.auster.billcheckout.caches.CacheableKey;
+
+import br.com.auster.billcheckout.consequence.telco.TelcoConsequenceBuilder;
+import br.com.auster.billcheckout.consequence.Consequence;
+import br.com.auster.billcheckout.consequence.ConsequenceAttributeList;
+import br.com.auster.billcheckout.consequence.telco.TelcoConsequence;
+import br.com.auster.billcheckout.consequence.telco.AccountDimension;
+import br.com.auster.billcheckout.consequence.telco.GeographicDimension;
+import br.com.auster.billcheckout.consequence.telco.TimeDimension;
+import br.com.auster.billcheckout.consequence.telco.CarrierDimension;
+import br.com.auster.billcheckout.consequence.telco.CycleDimension;
+
+global java.util.List results;
+global br.com.auster.billcheckout.consequence.telco.TelcoConsequenceBuilder consequenceBuilder;
+global br.com.auster.billcheckout.consequence.DimensionCache dimensionCache;
+global br.com.auster.billcheckout.thresholds.ThresholdLoader thresholdLoader;
+
+
+rule "A11 - Load NF thresholds from database"
+	salience 90
+	when
+		Account()
+	then
+		Collection thresholds = thresholdLoader.getFromCache(NFThreshold.class);
+		for (Iterator it = thresholds.iterator(); it.hasNext();) {
+			NFThreshold td = (NFThreshold) it.next();
+			System.out.println("OBJID="+ td.getUid() + ";LOCAL="+ td.isLocalNF());
+			insert(td);
+		}
+end
+
+rule "A11 - Validating current NF upper limit"
+	salience 80
+	when
+		Receipt( $carrierCode : carrierCode,
+		         $carrierState : carrierState,
+		         $carrierName : carrierName,
+		         $local : local,
+		         $nfTotal : totalAmount )
+		
+		NFThreshold( localNF == $local,
+					 upperAmountSet == true,
+					 $limitAmount: upperAmount < $nfTotal,
+					 upperAmount != BaseThreshold.DISABLED_LIMIT
+					)
+	then
+		consequenceBuilder.setRule("A11-1","Limite de NF Excedido"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+ 
+		TelcoConsequence c = (TelcoConsequence) consequenceBuilder.getConsequence();
+		c.setDescription("O limite superior para valores de NF foi extrapolado.");
+		c.addAttribute("Tipo da NF", ($local.booleanValue() ? "Local" : "Longa Distância") );
+		c.addAttribute("Operadora", $carrierName);
+		c.addAttribute("Estado", $carrierState);
+		c.addAttribute("Valor Limite", $limitAmount);
+		c.addAttribute("Valor da NF", $nfTotal);
+		
+		results.add(c);
+end
+
+
+rule "A11 - Validating current NF lower limit"
+	salience 80
+	when
+		Receipt( $carrierCode : carrierCode,
+		         $carrierState : carrierState,
+		         $carrierName : carrierName,
+		         $local : local,
+		         $nfTotal : totalAmount )
+		
+		NFThreshold( localNF == $local,
+					 lowerAmountSet == true,
+					 $limitAmount: lowerAmount > $nfTotal,
+					 lowerAmount != BaseThreshold.DISABLED_LIMIT
+				   )
+	then
+		consequenceBuilder.setRule("A11-2","Limite de NF Excedido"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+ 
+		TelcoConsequence c = (TelcoConsequence) consequenceBuilder.getConsequence();
+		c.setDescription("O limite inferior para valores de NF foi extrapolado.");
+		c.addAttribute("Tipo da NF", ($local.booleanValue() ? "Local" : "Longa Distância") );
+		c.addAttribute("Operadora", $carrierName);
+		c.addAttribute("Estado", $carrierState);
+		c.addAttribute("Valor Limite", $limitAmount);
+		c.addAttribute("Valor da NF", $nfTotal);
+		
+		results.add(c);
+end

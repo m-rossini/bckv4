@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rules-engine-test>
+	<drools3 name="drools3">
+		<rules-engine
+			class-name="br.com.auster.billcheckout.drools.Drools3RulesEngineProcessor"
+			debug="false" dump-rete="false" output-file="log/rulesout.log"
+			keep-wm-reference="false">
+
+			<rules-file
+				file-name="src/test/resources/rulesengine/TestRule.drl"
+				encrypted="false" />
+		</rules-engine>
+	</drools3>
+	<repository name="repository">
+		<rules-engine
+			class-name="br.com.auster.billcheckout.drools.RulesRepositoryEngineProcessor"
+			debug="false" dump-rete="false" output-file="log/rulesout.log"
+			repository-home="repository"
+			repository-configfile="src/test/resources/rulesengine/repository.xml">
+
+			<rules-node rule-name="TestRule" encrypted="false" />
+
+		</rules-engine>
+	</repository>
+
+	<parallel-processing>
+		<filter name="Guiding">
+			<rules-engine
+				class-name="br.com.auster.billcheckout.drools.Drools3RulesEngineProcessor"
+				debug="false" dump-rete="false" output-file="log/rulesout.log"
+				keep-wm-reference="false">
+ 
+				<rules-file
+					file-name="src/test/resources/rulesengine/Fibonacci.drl"
+					encrypted="false" />
+				<rules-file
+					file-name="src/test/resources/rulesengine/TestRule.drl"
+					encrypted="false" />
+
+			</rules-engine>
+		</filter>
+		<filter name="Rules">
+			<rules-engine
+				class-name="br.com.auster.billcheckout.drools.Drools3RulesEngineProcessor"
+				debug="false" dump-rete="false" output-file="log/rulesout.log"
+				keep-wm-reference="false">
+
+				<rules-file
+					file-name="src/test/resources/rulesengine/Sample.drl"
+					encrypted="false" />
+			</rules-engine>
+		</filter>
+	</parallel-processing>
+</rules-engine-test>

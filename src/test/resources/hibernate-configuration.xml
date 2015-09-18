@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <property name="show_sql">true</property>
+        <property name="use_outer_join">true</property>
+        
+        <property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+        <property name="connection.url">jdbc:oracle:thin:@mccoy:1521:TEST01</property>
+        <property name="connection.username">test</property>
+        <property name="connection.password">test</property>
+        
+        <property name="dialect">org.hibernate.dialect.Oracle9Dialect</property>
+
+        <mapping resource="br/com/auster/billcheckout/ruleobjects/Rule.hbm.xml"/>
+        <mapping resource="br/com/auster/billcheckout/ruleobjects/RuleType.hbm.xml"/>
+        <mapping resource="br/com/auster/billcheckout/consequence/ConsequenceAttributeList.hbm.xml"/>
+		<mapping resource="br/com/auster/billcheckout/consequence/telco/TelcoConsequence.hbm.xml"/>
+		<mapping resource="br/com/auster/billcheckout/consequence/telco/AccountDimension.hbm.xml"/>
+		<mapping resource="br/com/auster/billcheckout/consequence/telco/CarrierDimension.hbm.xml"/>
+		<mapping resource="br/com/auster/billcheckout/consequence/telco/CycleDimension.hbm.xml"/>
+		<mapping resource="br/com/auster/billcheckout/consequence/telco/GeographicDimension.hbm.xml"/>
+		<mapping resource="br/com/auster/billcheckout/consequence/telco/TimeDimension.hbm.xml"/>
+	
+    </session-factory>
+
+</hibernate-configuration>

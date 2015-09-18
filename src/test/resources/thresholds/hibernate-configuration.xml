@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <property name="show_sql">true</property>
+        <property name="use_outer_join">true</property>
+        
+        <property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+        <property name="connection.url">jdbc:oracle:thin:@mccoy:1521:TEST01</property>
+        <property name="connection.username">test</property>
+        <property name="connection.password">test</property>
+        
+        <property name="dialect">org.hibernate.dialect.Oracle9Dialect</property>
+
+        <mapping resource="br/com/auster/billcheckout/thresholds/UsageThreshold.hbm.xml"/>
+        <mapping resource="br/com/auster/billcheckout/thresholds/NFThreshold.hbm.xml"/>
+        <mapping resource="br/com/auster/billcheckout/thresholds/OCCThreshold.hbm.xml"/>
+        <mapping resource="br/com/auster/billcheckout/thresholds/InvoiceThreshold.hbm.xml"/>
+
+        <mapping resource="br/com/auster/billcheckout/thresholds/CustomerType.hbm.xml"/>
+        <mapping resource="br/com/auster/billcheckout/consequence/telco/GeographicDimension.hbm.xml"/>
+        <mapping resource="br/com/auster/billcheckout/consequence/telco/CarrierDimension.hbm.xml"/>
+			
+    </session-factory>
+
+</hibernate-configuration>

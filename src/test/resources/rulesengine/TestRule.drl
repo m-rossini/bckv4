@@ -1,0 +1,24 @@
+package br.com.auster.test;
+ 
+global java.util.List results;
+
+import br.com.auster.billcheckout.drools.Fact;
+
+function void println(String text) {
+	System.out.println(text);
+}
+
+rule "Rule1"
+	when
+		$fact : Fact (id <= 0)
+	then
+		println("Fact has not been saved: " + $fact ); 
+end
+
+rule "Rule2"
+	when
+		$fact : Fact( id > 0 )
+	then
+		println("Found: " + $fact); 
+		results.add($fact);
+end

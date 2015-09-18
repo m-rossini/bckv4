@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dw:config 
+	xmlns:dw="http://www.auster.com.br/dware/"
+	input-list-tag="consequence-list">
+	<dw:hibernate file-name="filter/consequence-hibernate.xml" 
+				  commit-count="100" dry-run="false"/>
+</dw:config>

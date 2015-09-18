@@ -1,0 +1,82 @@
+package br.com.auster.tim.billchekout;
+
+import br.com.auster.om.invoice.Account;
+import br.com.auster.om.invoice.Invoice;
+import br.com.auster.om.invoice.Receipt;
+
+import java.util.Collection;
+import java.util.Iterator;
+import br.com.auster.billcheckout.model.CycleDates;
+import br.com.auster.common.rules.GlobalForLog;
+
+global br.com.auster.billcheckout.model.ModelLoader modelLoader;
+
+
+
+rule "INIT LOAD CYCLEDATES" 
+	salience 97
+	when	
+		not ( CycleDates() )
+	then			
+		Collection dateList = modelLoader.getFromCache(CycleDates.class);
+		if (dateList != null) {
+			for (Iterator it = dateList.iterator(); it.hasNext(); ) {
+				CycleDates date = (CycleDates) it.next();
+				GlobalForLog.log("DEBUG", "Carregado objeto " + (date.getCustomerType() == null ? " null " : date.getCustomerType().getCustomerType()) + "/" + date.getEndDate() + "/" + date.getDueDate(), null);
+				insert(date);
+			}
+		} else {
+			GlobalForLog.log("WARN", "Não foram encontradas datas de ciclo na base de referência", null);
+		}	
+end 
+
+
+rule "UPDATE INVOICE WITH CYCLEDATES FOUND" 
+	salience 94
+	when	
+		$inv : Invoice( cycleCode == null, 
+		                $endDate : cycleEndDate,
+		                $dueDate : dueDate 
+		              )
+		
+		Account( $carrierCode : carrierCode,
+		         invoiceList contains $inv,
+		         $accountType : accountType
+		       )
+			 
+		CycleDates( $cycle : cycleCode,
+		            endDate == $endDate,
+		            $customerType : customerType -> ( ($customerType == null) || $customerType.getCustomerType().equals($accountType) ),
+		            dueDate == $dueDate 
+		          )
+	then	
+		$inv.setCycleCode($cycle);
+		GlobalForLog.log("DEBUG", "Informação de ciclo modificada para esta fatura", null);
+		update($inv);
+end 
+
+
+rule "SET UNKOWN CYCLE CODE WHEN NOT FOUND IN LOADED CYCLEDATES" 
+	salience 92
+	when	
+		$inv : Invoice( cycleCode == null, 
+		                $endDate : cycleEndDate,
+		                $dueDate : dueDate 
+		              )
+		
+		Account( $carrierCode : carrierCode,
+		         invoiceList contains $inv,
+		         $accountType : accountType
+		       )
+			 
+		not ( CycleDates ( endDate == $endDate,
+		                   $customerType : customerType -> ( ($customerType == null) || $customerType.getCustomerType().equals($accountType) ),
+		                   dueDate == $dueDate 
+		                 ) 
+		    )
+	then	
+		$inv.setCycleCode("NOCYCLE");
+		GlobalForLog.log("WARN", "Não foi encontrada uma data de ciclo para esta fatura na base de referência", null);
+		GlobalForLog.log("WARN", "Fatura " + $accountType + "/" + $endDate + "/" + $dueDate, null);
+		update($inv);
+end

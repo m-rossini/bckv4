@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class lazy="false"
+        name="br.com.auster.billcheckout.consequence.telco.GeographicDimension"
+        table="BCK_GEO_DM">
+
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_dimensions_uid</param>
+            </generator>
+        </id>
+
+        <property
+            name="country"
+            type="string"
+            update="true"
+            insert="true"
+            column="GEO_COUNTRY" 
+            length="32"
+            not-null="false"/>
+
+        <property
+            name="region"
+            type="string"
+            update="true"
+            insert="true"
+            column="GEO_REGION" 
+            length="16"
+            not-null="false"/>
+
+        <property
+            name="state"
+            type="string"
+            update="true"
+            insert="true"
+            column="GEO_STATE" 
+            length="2"
+            not-null="false"/>
+		
+        <property
+            name="city"
+            type="string"
+            update="true"
+            insert="true"
+            column="GEO_CITY" 
+			length="64"
+            not-null="false"/>		
+		
+        <property
+            name="custom1"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_1"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom2"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_2"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom3"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_3"
+            length="30"
+            not-null="false"/>
+   </class>
+
+</hibernate-mapping>

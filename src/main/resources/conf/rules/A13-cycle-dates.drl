@@ -1,0 +1,163 @@
+package br.com.auster.tim.billchekout; 
+
+#list any import classes here.
+import br.com.auster.billcheckout.consequence.telco.TelcoConsequenceBuilder;
+import br.com.auster.billcheckout.consequence.Consequence;
+import br.com.auster.billcheckout.consequence.ConsequenceAttributeList;
+import br.com.auster.billcheckout.consequence.ConsequenceBuilder;
+import br.com.auster.billcheckout.consequence.telco.TelcoConsequence;
+import br.com.auster.billcheckout.consequence.telco.AccountDimension;
+import br.com.auster.billcheckout.consequence.telco.GeographicDimension;
+import br.com.auster.billcheckout.consequence.telco.TimeDimension;
+import br.com.auster.billcheckout.consequence.telco.CarrierDimension;
+import br.com.auster.billcheckout.consequence.telco.CycleDimension;
+
+import br.com.auster.om.invoice.Account;
+import br.com.auster.om.invoice.Invoice;
+import br.com.auster.billcheckout.model.CycleDates;
+
+#declare any global variables here
+global br.com.auster.billcheckout.consequence.telco.TelcoConsequenceBuilder consequenceBuilder;
+global br.com.auster.billcheckout.consequence.DimensionCache dimensionCache;
+global br.com.auster.billcheckout.model.ModelLoader modelLoader;
+global java.util.List results; 
+
+
+rule "A13.1 - Cut date validation and A13.4 - Due date validation" 
+	salience 10
+	when
+		$inv : Invoice( $cutDate : cycleEndDate,
+			            $dueDate : dueDate,
+			            $issueInFile : issueDate,
+		                $cycleCode : cycleCode
+		              )
+		
+		Account( $carrierCode : carrierCode,
+		         invoiceList contains $inv,
+		         $accountType : accountType
+		       )
+			 
+		not ( CycleDates( endDate == $cutDate, 
+		                  dueDate == $dueDate,
+		                  $customerType : customerType -> ( ($customerType == null) || $customerType.getCustomerType().equals($accountType) )
+		                )
+		    )
+	then
+		// RULE A13-1 - Cut date validation
+		consequenceBuilder.setRule("A13-1","Validação de Data de Corte"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+
+		TelcoConsequence c = (TelcoConsequence) consequenceBuilder.getConsequence();	
+		c.setDescription("A data de corte não existe na tabela de referência ou não coincide com a cadastrada.");					
+        
+        c.addAttribute("Código do Ciclo", $cycleCode);
+        c.addDateAttribute("Data de Corte", $cutDate);
+        c.addDateAttribute("Data de Vencimento", $dueDate);
+        c.addAttribute("Tipo de Cliente", $accountType);
+		results.add(c);
+		
+		// RULE A13-4 - Due date validation
+		consequenceBuilder.setRule("A13-4","Validação da Data de Vencimento"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+		
+		c = (TelcoConsequence) consequenceBuilder.getConsequence();	
+		c.setDescription("Data de vencimento não existe na tabela de referência ou não coincide com a cadastrada.");					
+        
+        c.addAttribute("Código do Ciclo", $cycleCode);
+        c.addDateAttribute("Data de Corte", $cutDate);
+        c.addDateAttribute("Data de Vencimento", $dueDate);
+        c.addAttribute("Tipo de Cliente", $accountType);
+		results.add(c);
+		
+end	
+
+
+rule "A13.2 - Issue date validation" 
+	salience 0
+	when
+		$inv : Invoice( $cutDate : cycleEndDate,
+			            $dueDate : dueDate,
+			            $issueInFile : issueDate,
+	                    $cycleCode : cycleCode
+		              )
+		
+		Account( $carrierCode : carrierCode,
+		         invoiceList contains $inv,
+		         $accountType : accountType
+		       )
+			 
+		not ( CycleDates( endDate == $cutDate, 
+		                  dueDate == $dueDate,
+		                  $customerType : customerType -> ( ($customerType == null) || $customerType.getCustomerType().equals($accountType) ),
+		                  $issueInDatabase : issueDate -> ( $issueInDatabase.equals($issueInFile) )
+		                )
+		    )
+		 
+	then
+		consequenceBuilder.setRule("A13-2","Validação de Data de Emissão"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+		
+		TelcoConsequence c = (TelcoConsequence) consequenceBuilder.getConsequence();	
+		c.setDescription("Data de emissão não coincide com a cadastrada para este ciclo.");					
+        
+        c.addAttribute("Código do Ciclo", $cycleCode);
+        c.addDateAttribute("Data de Corte", $cutDate);
+        c.addDateAttribute("Data de Vencimento", $dueDate);
+        c.addAttribute("Tipo de Cliente", $accountType);
+        c.addDateAttribute("Data de Emissão", $issueInFile);
+		results.add(c);
+end	
+
+
+
+
+rule "A13.3 - Reference date validation"
+	salience 0	  
+	when
+		$inv : Invoice( $cutDate : cycleEndDate,
+			            $dueDate : dueDate,
+			            $refInFile : issueDate,
+			            $cycleCode : cycleCode
+		              )
+		
+		Account( $carrierCode : carrierCode,
+		         invoiceList contains $inv,
+		         $accountType : accountType
+		       )
+			 
+		not ( CycleDates( endDate == $cutDate, 
+		                  dueDate == $dueDate,
+		                  $customerType : customerType -> ( ($customerType == null) || $customerType.getCustomerType().equals($accountType) ),
+		                  $refInDatabase : referenceDate -> ( $refInDatabase.equals($refInFile) )
+		                )
+		     )
+	then
+		consequenceBuilder.setRule("A13-3","Validação de Mês de Referência"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+		
+		TelcoConsequence c = (TelcoConsequence) consequenceBuilder.getConsequence();	
+		c.setDescription("Mês de referência não coincide com o cadastrado para este ciclo.");
+        
+        c.addAttribute("Código do Ciclo", $cycleCode);
+        c.addDateAttribute("Data de Corte", $cutDate);
+        c.addDateAttribute("Data de Vencimento", $dueDate);
+        c.addAttribute("Tipo de Cliente", $accountType);
+        c.addDateAttribute("Mês de Referência", $refInFile);
+		results.add(c);
+end 

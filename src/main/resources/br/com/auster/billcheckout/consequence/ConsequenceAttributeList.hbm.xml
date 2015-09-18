@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class lazy="false"
+        name="br.com.auster.billcheckout.consequence.ConsequenceAttributeList"
+        table="BCK_CONSEQUENCE_ATTR">
+
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_consequence_uid</param>
+            </generator>
+        </id>
+
+		<property
+			name="attributeName1"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_1"	length="32"			not-null="false"/>
+	
+		<property
+			name="attributeValue1"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_1"	length="128"		not-null="false"/>
+	
+		 <property
+			name="attributeName2"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_2"	length="32"			not-null="false"/>
+	
+		<property
+			name="attributeValue2"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_2"	length="128"		not-null="false"/>
+		
+		<property
+			name="attributeName3"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_3"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue3"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_3"	length="128"		not-null="false"/>
+
+		<property
+			name="attributeName4"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_4"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue4"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_4"	length="128"		not-null="false"/>
+	
+		<property
+			name="attributeName5"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_5"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue5"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_5"	length="128"		not-null="false"/>
+
+		
+		<property
+			name="attributeName6"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_6"	length="32"			not-null="false"/>
+	
+		<property
+			name="attributeValue6"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_6"	length="128"		not-null="false"/>
+	
+		 <property
+			name="attributeName7"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_7"	length="32"			not-null="false"/>
+	
+		<property
+			name="attributeValue7"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_7"	length="128"		not-null="false"/>
+		
+		<property
+			name="attributeName8"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_8"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue8"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_8"	length="128"		not-null="false"/>
+
+		<property
+			name="attributeName9"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_9"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue9"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_9"	length="128"		not-null="false"/>
+	
+		<property
+			name="attributeName10"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_10"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue10"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_10"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName11"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_11"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue11"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_11"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName12"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_12"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue12"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_12"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName13"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_13"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue13"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_13"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName14"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_14"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue14"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_14"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName15"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_15"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue15"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_15"	length="128"		not-null="false"/>
+
+		<property
+			name="attributeName16"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_16"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue16"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_16"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName17"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_17"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue17"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_17"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName18"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_18"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue18"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_18"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName19"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_19"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue19"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_19"	length="128"		not-null="false"/>
+			
+		<property
+			name="attributeName20"	type="string"		update="true"		insert="true"
+			column="ATTR_NAME_20"	length="32"			not-null="false"/>
+
+		<property
+			name="attributeValue20"	type="string"		update="true"		insert="true"
+			column="ATTR_VALUE_20"	length="128"		not-null="false"/>
+					
+   </class>
+
+</hibernate-mapping>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class		lazy="false"
+        name="br.com.auster.billcheckout.consequence.telco.TelcoConsequence"
+        table="BCK_CONSEQUENCE">
+
+		<!-- PK for this class -->
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_consequence_uid</param>
+            </generator>
+        </id>
+
+		<!-- relation with Dimension classes -->
+        <many-to-one
+            name="account"
+            class="br.com.auster.billcheckout.consequence.telco.AccountDimension"
+            cascade="none"
+            outer-join="auto"
+            update="false"
+            insert="true"
+            column="ACCOUNT_UID"
+            not-null="true"/>
+
+        <many-to-one
+            name="carrier"
+            class="br.com.auster.billcheckout.consequence.telco.CarrierDimension"
+            cascade="none"
+            outer-join="auto"
+            update="false"
+            insert="true"
+            column="CARRIER_UID"
+            not-null="true"/>
+
+        <many-to-one
+            name="cycle"
+            class="br.com.auster.billcheckout.consequence.telco.CycleDimension"
+            cascade="none"
+            outer-join="auto"
+            update="false"
+            insert="true"
+            column="CYCLE_UID"
+            not-null="true"/>
+
+        <many-to-one
+            name="geographics"
+            class="br.com.auster.billcheckout.consequence.telco.GeographicDimension"
+            cascade="none"
+            outer-join="auto"
+            update="false"
+            insert="true"
+            column="GEO_UID"
+            not-null="true"/>
+
+        <many-to-one
+            name="time"
+            class="br.com.auster.billcheckout.consequence.telco.TimeDimension"
+            cascade="none"
+            outer-join="auto"
+            update="false"
+            insert="true"
+            column="TIME_UID"
+            not-null="true"/>
+			
+		<!-- relates to the rule that generated this consequence -->
+        <many-to-one
+            name="relatedRule"
+            class="br.com.auster.billcheckout.ruleobjects.Rule"
+            cascade="none"
+            outer-join="auto"
+            update="false"
+            insert="true"
+            column="RULE_UID"
+            not-null="true"/>
+					
+		<!-- simple attributes -->										
+        <property
+            name="transactionId"
+            type="string"
+            update="true"
+            insert="true"
+            column="TRANSACTION_ID" 
+            length="64"
+            not-null="false"/>
+
+        <property
+            name="description"
+            type="string"
+            update="true"
+            insert="true"
+            column="DESCRIPTION" 
+            length="128"
+            not-null="false"/>
+				
+        <property
+            name="filename"
+            type="string"
+            update="true"
+            insert="true"
+            column="FILENAME" 
+            length="256"
+            not-null="false"/>
+				
+        <property
+            name="level"
+            type="br.com.auster.billcheckout.consequence.hibernate.ConsequenceLevelTypeMapping"
+            update="true"
+            insert="true"
+            column="CONSEQUENCE_LEVEL" 
+            length="10"
+            not-null="true"/>
+				
+        <many-to-one
+            name="attributes"
+            lazy="false"
+            cascade="save-update"
+            column="ATTRIBUTE_UID"
+			unique="true"
+            not-null="true"/>				
+		
+        <property
+            name="custom1"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_1"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom2"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_2"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom3"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_3"
+            length="30"
+            not-null="false"/>
+		
+        <property
+            name="custom4"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_4"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom5"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_5"
+            length="30"
+            not-null="false"/>
+   </class>
+
+</hibernate-mapping>

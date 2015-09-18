@@ -1,0 +1,96 @@
+package br.com.auster.billchekout.core;
+
+import br.com.auster.om.invoice.Account;
+import br.com.auster.om.invoice.Invoice;
+import br.com.auster.om.invoice.Receipt;
+
+import br.com.auster.billcheckout.consequence.telco.AccountDimension;
+import br.com.auster.billcheckout.consequence.telco.GeographicDimension;
+import br.com.auster.billcheckout.consequence.telco.TimeDimension;
+import br.com.auster.billcheckout.consequence.telco.CycleDimension;
+import br.com.auster.billcheckout.consequence.telco.CarrierDimension;
+import br.com.auster.billcheckout.consequence.telco.TelcoDimensionsFacade;
+
+global br.com.auster.billcheckout.consequence.DimensionCache dimensionCache;
+
+/** 
+ * Defines the region for each state
+ */
+function String findRegion(String _state) {
+   if (_state == null) { return null; }
+   // estados do Sudeste
+   if ("SP".equals(_state) || "RJ".equals(_state) || 
+       "ES".equals(_state) || "MG".equals(_state)) {
+       return "Sudeste";
+   // estados do Sul
+   } else if ("SC".equals(_state) || "RS".equals(_state) || 
+              "PR".equals(_state)) {
+       return "Sul";
+   // estados do Centro-Oeste
+   } else if ("DF".equals(_state) || "MT".equals(_state) || 
+              "MS".equals(_state) || "GO".equals(_state)) {
+       return "Centro-Oeste";
+   // estados do Norte
+   } else if ("AC".equals(_state) || "RO".equals(_state) || 
+              "AM".equals(_state) || "PA".equals(_state) || 
+              "RR".equals(_state) || "AP".equals(_state) || 
+              "TO".equals(_state)) {
+       return "Norte";
+   // todos os outros são Nordeste
+   }
+   return "Nordeste";
+}
+
+
+ 
+/**
+ * INIT: These rules will build all dimension objects needed to create consequences
+ *       and will store them into a cache-like global.
+ */
+rule "INIT-Account-Dimension" 
+	salience 99
+	when	
+		$account : Account()
+	then
+	   // account dimension - one for each account
+	   AccountDimension acc = new AccountDimension($account.getAccountType(), 
+	                                               null, 
+	                                               $account.getAccountNumber());
+	   dimensionCache.addToCache("account", acc);
+	   // geographic dimension - one for each account
+	   GeographicDimension geo = new GeographicDimension("Brasil", 
+	                                                     findRegion($account.getAccountState()), 
+	                                                     $account.getAccountState(), 
+	                                                     null);
+      dimensionCache.addToCache("geo", geo);
+end 
+
+rule "INIT-Invoice-Dimension"
+	salience 99
+	when	
+		$invoice : Invoice($cycle : cycleCode)
+	then
+	   // cycle dimension - one for each account (since we got 1 invoice per account)
+	   CycleDimension cycle = new CycleDimension($cycle, 
+	                                             $invoice.getCycleEndDate(), 
+	                                             $invoice.getIssueDate(),
+	                                             $invoice.getDueDate());
+	                                             
+   	   dimensionCache.addToCache("cycle", cycle);
+	   // time dimension - one for each invoice
+	   TimeDimension time = new TimeDimension($invoice.getCycleStartDate());
+   	   dimensionCache.addToCache("time", time);	   
+end 
+
+
+rule "INIT-Carrier-Dimension"
+	salience 99
+	when	
+		$receipt : Receipt( $cc : carrierCode )
+	then
+	   // carrier dimension - one for each NF
+	   CarrierDimension carrier = new CarrierDimension($receipt.getCarrierName(), 
+	                                                   $receipt.getCarrierCode(),
+	                                                   $receipt.getCarrierState());
+   	   dimensionCache.addToCache($receipt.getCarrierCode(), carrier);	                                                   
+end

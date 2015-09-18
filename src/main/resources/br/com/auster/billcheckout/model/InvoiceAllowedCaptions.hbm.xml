@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class lazy="false"
+    	name="br.com.auster.billcheckout.model.InvoiceAllowedCaptions"
+        table="BCK_INVOICE_ALLOWED_CAPTIONS">
+        
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_dimensions_uid</param>
+            </generator>
+        </id>
+        
+        <property
+            name="allowedCaption"
+            type="string"
+            update="true"
+            insert="true"
+            column="ALLOWED_CAPTION" 
+            length="64"
+            not-null="true"/>
+            
+        <property
+            name="invoiceSectionUid"
+            type="long"
+            update="true"
+            insert="true"
+            column="SECTION_UID"             
+            not-null="true"/>
+        
+	</class>
+</hibernate-mapping>

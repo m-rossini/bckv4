@@ -1,0 +1,107 @@
+package br.com.auster.billchekout.core;
+
+import java.util.Iterator;
+import java.util.Collection;
+
+import br.com.auster.om.invoice.Invoice;
+import br.com.auster.om.invoice.Account;
+import br.com.auster.billcheckout.thresholds.BaseThreshold;
+import br.com.auster.billcheckout.thresholds.InvoiceThreshold;
+import br.com.auster.billcheckout.thresholds.CustomerType;
+import br.com.auster.billcheckout.caches.CacheableKey;
+
+import br.com.auster.billcheckout.consequence.telco.TelcoConsequenceBuilder;
+import br.com.auster.billcheckout.consequence.Consequence;
+import br.com.auster.billcheckout.consequence.ConsequenceAttributeList;
+import br.com.auster.billcheckout.consequence.telco.TelcoConsequence;
+import br.com.auster.billcheckout.consequence.telco.AccountDimension;
+import br.com.auster.billcheckout.consequence.telco.GeographicDimension;
+import br.com.auster.billcheckout.consequence.telco.TimeDimension;
+import br.com.auster.billcheckout.consequence.telco.CarrierDimension;
+import br.com.auster.billcheckout.consequence.telco.CycleDimension;
+
+global java.util.List results;
+global br.com.auster.billcheckout.consequence.telco.TelcoConsequenceBuilder consequenceBuilder;
+global br.com.auster.billcheckout.consequence.DimensionCache dimensionCache;
+global br.com.auster.billcheckout.thresholds.ThresholdLoader thresholdLoader;
+
+
+rule "A10 - Load Invoice thresholds from database"
+	salience 90
+	when
+		Account()
+	then
+		Collection thresholds = thresholdLoader.getFromCache(InvoiceThreshold.class);
+		for (Iterator it = thresholds.iterator(); it.hasNext();) {
+			insert(it.next());
+		}
+end
+
+rule "A10 - Validating current Invoice upper limit"
+	salience 80
+	when
+		$invoice : Invoice( $invoiceTotal : totalAmount )
+
+		Account( invoiceList contains $invoice,
+		         $accountType : accountType,
+		         $accountState : accountState,
+		         $carrierCode : carrierCode )
+		
+		InvoiceThreshold( $custType : customerType -> ( ($custType == null) || $custType.getCustomerType().equals($accountType) ),
+						  $uf : UF -> ( ($uf == null) || $uf.getState().equals($accountState) ),
+						  upperAmountSet == true,
+						  $limitAmount: upperAmount < $invoiceTotal,
+						  upperAmount != BaseThreshold.DISABLED_LIMIT
+						)
+	then
+		consequenceBuilder.setRule("A10-1","Limite de Fatura Excedido"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+ 
+		TelcoConsequence c = (TelcoConsequence) consequenceBuilder.getConsequence();
+		c.setDescription("O limite superior para valores de fatura foi extrapolado.");
+		c.addAttribute("Tipo da Conta", ($custType == null ? "" : $custType.getCustomerType()) );
+		c.addAttribute("Estado", $uf);
+		c.addAttribute("Valor Limite", $limitAmount);
+		c.addAttribute("Valor da Fatura", $invoiceTotal);
+		
+		results.add(c);
+end
+
+
+rule "A10 - Validating current Invoice lower limit"
+	salience 80
+	when
+		$invoice : Invoice( $invoiceTotal : totalAmount )
+
+		Account( invoiceList contains $invoice,
+		         $accountType : accountType,
+		         $accountState : accountState,
+		         $carrierCode : carrierCode )
+		
+		InvoiceThreshold( $custType : customerType -> ( ($custType == null) || $custType.getCustomerType().equals($accountType) ),
+						  $uf : UF -> ( ($uf == null) || $uf.getState().equals($accountState) ),
+						  lowerAmountSet == true,
+						  $limitAmount: lowerAmount > $invoiceTotal,
+						  lowerAmount != BaseThreshold.DISABLED_LIMIT
+						)
+	then
+		consequenceBuilder.setRule("A10-2","Limite de Fatura Excedido"); 
+		consequenceBuilder.setAccount((AccountDimension) dimensionCache.getFromCache("account"));
+		consequenceBuilder.setGeographics((GeographicDimension) dimensionCache.getFromCache("geo"));		
+		consequenceBuilder.setTime((TimeDimension) dimensionCache.getFromCache("time"));		
+		consequenceBuilder.setCycle((CycleDimension) dimensionCache.getFromCache("cycle"));				
+		consequenceBuilder.setCarrier((CarrierDimension) dimensionCache.getFromCache($carrierCode));
+ 
+		TelcoConsequence c = (TelcoConsequence) consequenceBuilder.getConsequence();
+		c.setDescription("O limite inferior para valores de fatura foi extrapolado.");
+		c.addAttribute("Tipo da Conta", ($custType == null ? "" : $custType.getCustomerType()) );
+		c.addAttribute("Estado", $uf);
+		c.addAttribute("Valor Limite", $limitAmount);
+		c.addAttribute("Valor da Fatura", $invoiceTotal);
+		
+		results.add(c);
+end

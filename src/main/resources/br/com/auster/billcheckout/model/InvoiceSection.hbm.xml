@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping
+PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class lazy="false"
+        name="br.com.auster.billcheckout.model.InvoiceSection"
+        table="BCK_INVOICE_SECTION">
+        
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_dimensions_uid</param>
+            </generator>
+        </id>
+        
+        <property
+            name="sectionShortName"
+            type="string"
+            update="true"
+            insert="true"
+            column="SECTION_SHORT_NAME" 
+            length="10"
+            not-null="true"/>
+            
+        <property
+            name="sectionDescription"
+            type="string"
+            update="true"
+            insert="true"
+            column="SECTION_DESCRIPTION" 
+            length="64"
+            not-null="false"/>      
+        
+        <property
+            name="carrierDimensionUid"
+            type="long"
+            update="true"
+            insert="true"
+            column="CARRIER_UID"             
+            not-null="false"/>      
+        
+    </class>
+        
+</hibernate-mapping>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class lazy="false"
+        name="br.com.auster.billcheckout.thresholds.UsageThreshold"
+        table="BCK_PARM_USAGE_THRESHOLD">
+
+		<!-- PK for this class -->
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_dimensions_uid</param>
+            </generator>
+        </id>
+
+		<!-- OCC threshold specific attributes -->
+
+        <property
+            name="home"
+            type="true_false"
+            update="true"
+            insert="true"
+            column="HOME_FLAG" 
+            not-null="true"/>
+
+        <property
+            name="collectCall"
+            type="true_false"
+            update="true"
+            insert="true"
+            column="COLLECT_FLAG" 
+            not-null="true"/>
+
+        <property
+            name="relative"
+            type="true_false"
+            update="true"
+            insert="true"
+            column="RELATIVE_FLAG" 
+            not-null="true"/>
+
+		<component 
+			name="callType"
+			class="br.com.auster.billcheckout.thresholds.VoiceCallType">
+			
+			<property
+				name="sequenceId"
+				type="integer"
+				update="true"
+				insert="true"
+				column="CALL_TYPE" 
+				not-null="true"/>
+		</component>
+
+		<component 
+			name="timePeriod"
+			class="br.com.auster.billcheckout.thresholds.TimePeriod">
+			
+			<property
+				name="sequenceId"
+				type="integer"
+				update="true"
+				insert="true"
+				column="TIME_PERIOD" 
+				not-null="true"/>
+		</component>
+
+		<component 
+			name="destination"
+			class="br.com.auster.billcheckout.thresholds.DestinationType">
+			
+			<property
+				name="sequenceId"
+				type="integer"
+				update="true"
+				insert="true"
+				column="DESTINATION_TYPE" 
+				not-null="true"/>
+		</component>
+
+		<component 
+			name="usageType"
+			class="br.com.auster.billcheckout.thresholds.UsageType">
+			
+			<property
+				name="sequenceId"
+				type="integer"
+				update="true"
+				insert="true"
+				column="USAGE_TYPE" 
+				not-null="true"/>
+		</component>
+	
+        <property
+            name="lowerDuration"
+            type="long"
+            update="true"
+            insert="true"
+            column="LOWER_DURATION" 
+            not-null="false"/>
+													
+        <property
+            name="upperDuration"
+            type="long"
+            update="true"
+            insert="true"
+            column="UPPER_DURATION" 
+            not-null="false"/>
+
+		<!-- Attributes all threshold objects have --> 
+
+        <property
+            name="upperAmount"
+            type="double"
+            update="true"
+            insert="true"
+            column="UPPER_LIMIT" 
+            scale="19"
+			precision="4"
+            not-null="false"/>
+
+        <property
+            name="lowerAmount"
+            type="double"
+            update="true"
+            insert="true"
+            column="LOWER_LIMIT" 
+            scale="19"
+			precision="4"
+            not-null="false"/>
+						
+        <property
+            name="hintMessage"
+            type="string"
+            update="true"
+            insert="true"
+            column="HINT_MESSAGE" 
+            length="128"
+            not-null="false"/>
+				
+        <property
+            name="custom1"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_1"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom2"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_2"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom3"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_3"
+            length="30"
+            not-null="false"/>
+   </class>
+
+</hibernate-mapping>

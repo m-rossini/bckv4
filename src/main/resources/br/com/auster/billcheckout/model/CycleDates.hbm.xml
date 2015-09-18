@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class lazy="false"
+        name="br.com.auster.billcheckout.model.CycleDates"
+        table="BCK_PARM_CYCLE_DATES">
+
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_dimensions_uid</param>
+            </generator>
+        </id>
+
+        <property
+            name="cycleCode"
+            type="string"
+            update="true"
+            insert="true"
+            column="CYCLE_CODE" 
+            length="8"
+            not-null="true"/>
+
+        <property
+            name="endDate"
+            type="date"
+            update="true"
+            insert="true"
+            column="END_DATE" 
+            not-null="true"/>
+
+		<many-to-one
+			name="customerType"
+			column="CUST_TYPE_UID"
+			class="br.com.auster.billcheckout.thresholds.CustomerType"
+			cascade="none"/>
+		
+        <property
+            name="startDate"
+            type="date"
+            update="true"
+            insert="true"
+            column="START_DATE" 
+            not-null="false"/>
+
+        <property
+            name="issueDate"
+            type="date"
+            update="true"
+            insert="true"
+            column="ISSUE_DATE" 
+            not-null="false"/>
+		
+        <property
+            name="referenceDate"
+            type="date"
+            update="true"
+            insert="true"
+            column="REF_DATE" 
+            not-null="false"/>
+		
+        <property
+            name="dueDate"
+            type="date"
+            update="true"
+            insert="true"
+            column="DUE_DATE" 
+            not-null="false"/>
+
+        <property
+            name="custom1"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_1"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom2"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_2"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom3"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_3"
+            length="30"
+            not-null="false"/>
+
+   </class>
+
+</hibernate-mapping>

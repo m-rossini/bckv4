@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "etc/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class lazy="false"
+        name="br.com.auster.billcheckout.thresholds.NFTaxesThreshold"
+        table="BCK_PARM_NF_TAX_THRESHOLD">
+
+		<!-- PK for this class -->
+        <id name="uid"
+            column="OBJID"
+            type="long"
+            unsaved-value="0">
+            <generator class="sequence">
+                <param name="sequence">bck_dimensions_uid</param>
+            </generator>
+        </id>
+
+		<!-- NF threshold specific attributes -->
+
+		<component 
+			name="taxType"
+			class="br.com.auster.billcheckout.thresholds.TaxType">
+			
+			<property
+				name="sequenceId"
+				type="integer"
+				update="true"
+				insert="true"
+				column="TAX_TYPE" 
+				not-null="true"/>			
+		</component>
+		
+		<!-- Attributes all threshold objects have --> 
+
+        <property
+            name="upperAmount"
+            type="double"
+            update="true"
+            insert="true"
+            column="UPPER_LIMIT" 
+            scale="19"
+			precision="4"
+            not-null="false"/>
+
+        <property
+            name="lowerAmount"
+            type="double"
+            update="true"
+            insert="true"
+            column="LOWER_LIMIT" 
+            scale="19"
+			precision="4"
+            not-null="false"/>
+						
+        <property
+            name="hintMessage"
+            type="string"
+            update="true"
+            insert="true"
+            column="HINT_MESSAGE" 
+            length="128"
+            not-null="false"/>
+				
+        <property
+            name="custom1"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_1"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom2"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_2"
+            length="30"
+            not-null="false"/>
+
+        <property
+            name="custom3"
+            type="string"
+            update="true"
+            insert="true"
+            column="CUSTOM_3"
+            length="30"
+            not-null="false"/>
+   </class>
+
+</hibernate-mapping>
